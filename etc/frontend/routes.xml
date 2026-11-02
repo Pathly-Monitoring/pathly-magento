@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Pathly. All rights reserved.
+ * See LICENSE.txt for license details (OSL-3.0).
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="standard">
+        <route id="pathly" frontName="pathly">
+            <module name="Pathly_Monitoring"/>
+        </route>
+    </router>
+</config>

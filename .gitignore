@@ -1,0 +1,6 @@
+/build/
+/vendor/
+/dev/tools/*/vendor/
+/.phpunit.cache/
+/.phpunit.result.cache
+/tests/integration/.state/

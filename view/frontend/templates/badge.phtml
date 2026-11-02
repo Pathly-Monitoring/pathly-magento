@@ -1,0 +1,20 @@
+<?php
+/**
+ * Copyright © Pathly. All rights reserved.
+ * See LICENSE.txt for license details (OSL-3.0).
+ */
+
+/** @var \Pathly\Monitoring\Block\Widget\Badge $block */
+/** @var \Magento\Framework\Escaper $escaper */
+$statusPage = $block->getStatusPageUrl();
+$image = '<img src="' . $escaper->escapeUrl($block->getImageUrl()) . '" alt="'
+    . $escaper->escapeHtmlAttr(__('Availability of the shop, by Pathly')) . '" height="20" loading="lazy"/>';
+?>
+<div class="pathly-badge">
+    <?php if ($statusPage !== null): ?>
+        <a href="<?= $escaper->escapeUrl($statusPage) ?>" target="_blank" rel="noopener noreferrer">
+            <?= /* @noEscape */ $image ?></a>
+    <?php else: ?>
+        <?= /* @noEscape */ $image ?>
+    <?php endif; ?>
+</div>

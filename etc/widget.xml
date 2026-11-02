@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Pathly. All rights reserved.
+ * See LICENSE.txt for license details (OSL-3.0).
+ */
+-->
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+    <widget id="pathly_badge" class="Pathly\Monitoring\Block\Widget\Badge" is_email_compatible="false">
+        <label translate="true">Pathly availability badge</label>
+        <description translate="true">Links to your status page. Hidden while the badge is off.</description>
+    </widget>
+</widgets>

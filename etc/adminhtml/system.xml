@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Pathly. All rights reserved.
+ * See LICENSE.txt for license details (OSL-3.0).
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="pathly" translate="label" sortOrder="900">
+            <label>Pathly</label>
+        </tab>
+        <section id="pathly_monitoring" translate="label" sortOrder="10"
+                 showInDefault="1" showInWebsite="0" showInStore="0">
+            <label>Monitoring</label>
+            <tab>pathly</tab>
+            <resource>Pathly_Monitoring::config</resource>
+            <group id="connection" translate="label" sortOrder="10" showInDefault="1">
+                <label>Connection</label>
+                <field id="status" translate="label" sortOrder="5" showInDefault="1">
+                    <label>Account</label>
+                    <frontend_model>Pathly\Monitoring\Block\Adminhtml\System\Config\Connection</frontend_model>
+                </field>
+                <field id="api_key" translate="label comment" type="obscure" sortOrder="10" showInDefault="1">
+                    <label>API key</label>
+                    <backend_model>Pathly\Monitoring\Model\Config\Backend\ApiKey</backend_model>
+                    <comment>Nothing is sent to Pathly before you save a key.</comment>
+                </field>
+            </group>
+            <group id="flow" translate="label" sortOrder="20" showInDefault="1">
+                <label>Flow of the checkout</label>
+                <field id="lumi" translate="label" sortOrder="10" showInDefault="1">
+                    <label>Lumi</label>
+                    <frontend_model>Pathly\Monitoring\Block\Adminhtml\System\Config\Lumi</frontend_model>
+                </field>
+                <field id="replay_after_update" translate="label comment" type="select" sortOrder="20"
+                       showInDefault="1">
+                    <label>Replay the Flows after an update</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>After setup:upgrade or a version change, once maintenance mode is off.</comment>
+                </field>
+                <field id="extra_flow_ids" translate="label comment" type="textarea" sortOrder="30"
+                       showInDefault="1">
+                    <label>Other Flows to replay</label>
+                    <comment>Identifiers of Flows recorded in Pathly, separated by commas.</comment>
+                </field>
+            </group>
+            <group id="badge" translate="label comment" sortOrder="30" showInDefault="1">
+                <label>Availability badge</label>
+                <comment>Publishes your status page. The shop serves the badge itself.</comment>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1">
+                    <label>Show the badge</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <backend_model>Pathly\Monitoring\Model\Config\Backend\BadgeToggle</backend_model>
+                </field>
+                <field id="footer" translate="label comment" type="select" sortOrder="20" showInDefault="1">
+                    <label>In the footer</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Otherwise, use the Pathly badge widget (Content > Widgets).</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

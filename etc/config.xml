@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Pathly. All rights reserved.
+ * See LICENSE.txt for license details (OSL-3.0).
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <pathly_monitoring>
+            <flow>
+                <replay_after_update>1</replay_after_update>
+            </flow>
+            <badge>
+                <enabled>0</enabled>
+                <footer>0</footer>
+            </badge>
+        </pathly_monitoring>
+    </default>
+</config>

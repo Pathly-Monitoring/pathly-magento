@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Pathly. All rights reserved.
+ * See LICENSE.txt for license details (OSL-3.0).
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Pathly\Monitoring\Model\Api\TransportInterface" type="Pathly\Monitoring\Model\Http\Transport"/>
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="pathly_sync" xsi:type="object">Pathly\Monitoring\Console\Command\SyncCommand</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Pathly\Monitoring\Console\Command\SyncCommand">
+        <arguments>
+            <argument name="sync" xsi:type="object">Pathly\Monitoring\Model\Sync\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Config\Model\Config\TypePool">
+        <arguments>
+            <argument name="sensitive" xsi:type="array">
+                <item name="pathly_monitoring/connection/api_key" xsi:type="string">1</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

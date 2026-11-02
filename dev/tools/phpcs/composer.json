@@ -1,0 +1,16 @@
+{
+    "name": "pathly/module-monitoring-phpcs",
+    "description": "Style tools (Magento Coding Standard) of the Pathly module for Magento. Not shipped.",
+    "type": "project",
+    "license": "OSL-3.0",
+    "require": {
+        "php": ">=8.1",
+        "magento/magento-coding-standard": "^34.0"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}

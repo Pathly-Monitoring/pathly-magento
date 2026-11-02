@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Pathly. All rights reserved.
+ * See LICENSE.txt for license details (OSL-3.0).
+ */
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="dev/tools/phpunit/vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="Test/bootstrap.php"
+         colors="true"
+         cacheDirectory="build/phpunit-cache"
+         failOnWarning="true"
+         failOnRisky="true"
+         beStrictAboutOutputDuringTests="true">
+    <testsuites>
+        <testsuite name="unit">
+            <directory>Test/Unit</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory suffix=".php">Block</directory>
+            <directory suffix=".php">Console</directory>
+            <directory suffix=".php">Controller</directory>
+            <directory suffix=".php">Cron</directory>
+            <directory suffix=".php">Model</directory>
+            <directory suffix=".php">Setup</directory>
+            <file>registration.php</file>
+        </include>
+    </source>
+</phpunit>

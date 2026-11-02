@@ -1,0 +1,96 @@
+<?php
+/**
+ * Copyright © Pathly. All rights reserved.
+ * See LICENSE.txt for license details (OSL-3.0).
+ */
+
+/** @var \Pathly\Monitoring\Block\Adminhtml\Dashboard\Panel $block */
+/** @var \Magento\Framework\Escaper $escaper */
+$panel = $block->getPanel();
+?>
+<section class="pathly-panel dashboard-item">
+    <div class="dashboard-item-title"><?= $escaper->escapeHtml(__('Pathly')) ?></div>
+    <?php if (empty($panel['connected'])): ?>
+        <p><?= $escaper->escapeHtml(__('Know before your customers when your checkout breaks.')) ?></p>
+        <p>
+            <a class="action-default" target="_blank" rel="noopener noreferrer"
+               href="<?= $escaper->escapeUrl($block->getSignupUrl()) ?>">
+                <?= $escaper->escapeHtml(__('Create a free account')) ?></a>
+            <a href="<?= $escaper->escapeUrl($block->getSettingsUrl()) ?>">
+                <?= $escaper->escapeHtml(__('Paste an API key')) ?></a>
+        </p>
+    <?php else: ?>
+        <?php if (!empty($panel['error'])): ?>
+            <p class="message message-warning"><?= $escaper->escapeHtml($panel['error']) ?></p>
+        <?php endif; ?>
+        <table class="data-table pathly-states">
+            <tbody>
+            <tr>
+                <th scope="row"><?= $escaper->escapeHtml(__('Ping of the shop')) ?></th>
+                <?php if (!empty($panel['ping'])): ?>
+                    <td class="<?= $escaper->escapeHtmlAttr($block->statusClass($panel['ping']['status'])) ?>">
+                        <?= $escaper->escapeHtml($block->statusLabel($panel['ping']['status'])) ?>
+                    </td>
+                <?php else: ?>
+                    <td><?= $escaper->escapeHtml($panel['pingError'] ?? __('Not created yet')) ?></td>
+                <?php endif; ?>
+            </tr>
+            <?php foreach ($panel['flows'] ?? [] as $flow): ?>
+                <tr>
+                    <th scope="row">
+                        <a target="_blank" rel="noopener noreferrer" href="<?= $escaper->escapeUrl($flow['url']) ?>">
+                            <?= $escaper->escapeHtml(__('Flow %1', $flow['name'])) ?></a>
+                    </th>
+                    <td class="<?= $escaper->escapeHtmlAttr($block->statusClass($flow['status'])) ?>">
+                        <?= $escaper->escapeHtml($block->statusLabel($flow['status'])) ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            <?php if (empty($panel['flows'])): ?>
+                <tr>
+                    <th scope="row"><?= $escaper->escapeHtml(__('Flow of the checkout')) ?></th>
+                    <td>
+                        <a href="<?= $escaper->escapeUrl($block->getSettingsUrl()) ?>">
+                            <?= $escaper->escapeHtml(__('Prepare it with Lumi')) ?></a>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            </tbody>
+        </table>
+        <?php if (!empty($panel['lastFailure'])): $failure = $panel['lastFailure']; ?>
+            <div class="pathly-failure">
+                <p><strong><?= $escaper->escapeHtml(__('Last failure')) ?></strong>
+                    <?= $escaper->escapeHtml($failure['scenario']) ?> ·
+                    <?= $escaper->escapeHtml($block->formatDate($failure['at'], \IntlDateFormatter::MEDIUM, true)) ?>
+                </p>
+                <?php if ($failure['message'] !== ''): ?>
+                    <p><?= $escaper->escapeHtml($failure['message']) ?></p>
+                <?php endif; ?>
+                <?php if (!empty($failure['screenshotUrl'])): ?>
+                    <a target="_blank" rel="noopener noreferrer" href="<?= $escaper->escapeUrl($failure['url']) ?>">
+                        <img class="pathly-shot" loading="lazy"
+                             src="<?= $escaper->escapeUrl($failure['screenshotUrl']) ?>"
+                             alt="<?= $escaper->escapeHtmlAttr(__('Screenshot of the failed step')) ?>"/></a>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+        <?php if (!empty($panel['account'])): $account = $panel['account']; ?>
+            <p class="pathly-plan">
+                <?= $escaper->escapeHtml(__('Plan %1', $account['plan'])) ?>
+                <?php foreach ($account['quotas'] as $name => $quota): ?>
+                    · <?= $escaper->escapeHtml($block->quotaName((string) $name)) ?>
+                    <?= $escaper->escapeHtml($block->quotaLabel($quota)) ?>
+                <?php endforeach; ?>
+                · <a target="_blank" rel="noopener noreferrer"
+                     href="<?= $escaper->escapeUrl($account['billingUrl']) ?>">
+                    <?= $escaper->escapeHtml(__('Change plan')) ?></a>
+            </p>
+        <?php endif; ?>
+        <p>
+            <a target="_blank" rel="noopener noreferrer" href="<?= $escaper->escapeUrl($block->getAppUrl()) ?>">
+                <?= $escaper->escapeHtml(__('Open Pathly')) ?></a>
+            · <a href="<?= $escaper->escapeUrl($block->getSettingsUrl()) ?>">
+                <?= $escaper->escapeHtml(__('Settings')) ?></a>
+        </p>
+    <?php endif; ?>
+</section>

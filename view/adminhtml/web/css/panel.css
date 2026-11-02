@@ -1,0 +1,12 @@
+/**
+ * Copyright © Pathly. All rights reserved.
+ * See LICENSE.txt for license details (OSL-3.0).
+ */
+.pathly-panel { margin-bottom: 2rem; }
+.pathly-panel .pathly-states { max-width: 48rem; }
+.pathly-panel .pathly-ok { color: #1f7a3a; font-weight: 600; }
+.pathly-panel .pathly-slow { color: #8a5a00; font-weight: 600; }
+.pathly-panel .pathly-fail { color: #b3261e; font-weight: 600; }
+.pathly-panel .pathly-pending { color: #5f6368; }
+.pathly-panel .pathly-shot { display: block; max-width: 32rem; width: 100%; border: 1px solid #ccc; margin: .5rem 0; }
+.pathly-lumi .pathly-lumi-proposal { margin: .5rem 0; }
