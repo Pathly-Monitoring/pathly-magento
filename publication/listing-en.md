@@ -45,7 +45,7 @@ Each run of the Flow creates a test cart on the shop. It can trigger your abando
 
 ### Compatibility
 
-Magento Open Source and Adobe Commerce 2.4.6, 2.4.7 and 2.4.8, PHP 8.1 to 8.4 depending on the Magento version. The Magento cron must run. Multi-store: the extension monitors the default store view.
+Magento Open Source and Adobe Commerce 2.4.6, 2.4.7, 2.4.8 and 2.4.9, PHP 8.1 to 8.5 depending on the Magento version. The Magento cron must run. Multi-store: the extension monitors the default store view.
 
 ## FAQ
 
@@ -88,4 +88,4 @@ It recognizes Magento. If your theme is heavily customized and Lumi does not fin
 
 ## Compatibility to tick
 
-Magento Open Source 2.4.6, 2.4.7, 2.4.8. Adobe Commerce (on-premises) 2.4.6, 2.4.7, 2.4.8. Adobe Commerce on cloud: same versions, not tested on the cloud infrastructure.
+Magento Open Source 2.4.6, 2.4.7, 2.4.8, 2.4.9. Adobe Commerce (on-premises) 2.4.6, 2.4.7, 2.4.8, 2.4.9. Adobe Commerce on cloud: same versions, not tested on the cloud infrastructure.
