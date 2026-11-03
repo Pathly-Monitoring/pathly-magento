@@ -2,7 +2,7 @@
     "name": "pathly/module-monitoring",
     "description": "Pathly for Magento: Ping of the shop, Flow of the checkout prepared by Lumi, replay after each update, dashboard panel and availability badge.",
     "type": "magento2-module",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "license": "OSL-3.0",
     "keywords": [
         "magento",
