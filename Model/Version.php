@@ -12,5 +12,5 @@ namespace Pathly\Monitoring\Model;
  */
 class Version
 {
-    public const MODULE = '1.0.0'; // x-release-please-version
+    public const MODULE = '1.0.1'; // x-release-please-version
 }

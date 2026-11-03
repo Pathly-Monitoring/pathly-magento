@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/Pathly-Monitoring/pathly-magento/compare/v1.0.0...v1.0.1) (2026-11-03)
+
+
+### Corrections
+
+* compatible PHP 8.5 et Magento 2.4.9 ([#2](https://github.com/Pathly-Monitoring/pathly-magento/issues/2)) ([b5b2f0e](https://github.com/Pathly-Monitoring/pathly-magento/commit/b5b2f0ee0ebb195fe5d827f48a264be24e20e639))
+
 ## 1.0.0 (2026-11-03)
 
 
