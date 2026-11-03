@@ -47,7 +47,7 @@ Chaque exécution du Flow crée un panier de test sur la boutique. Elle peut dé
 
 ### Compatibilité
 
-Magento Open Source et Adobe Commerce 2.4.6, 2.4.7 et 2.4.8, PHP 8.1 à 8.4 selon la version de Magento. La tâche planifiée (cron) de Magento doit tourner. Multiboutique : l'extension surveille la vue de magasin par défaut.
+Magento Open Source et Adobe Commerce 2.4.6, 2.4.7, 2.4.8 et 2.4.9, PHP 8.1 à 8.5 selon la version de Magento. La tâche planifiée (cron) de Magento doit tourner. Multiboutique : l'extension surveille la vue de magasin par défaut.
 
 ## Questions fréquentes
 

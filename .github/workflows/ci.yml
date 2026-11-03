@@ -45,6 +45,7 @@ jobs:
           - { php: "8.1", magento: "2.4.6-p15" }
           - { php: "8.3", magento: "2.4.7-p10" }
           - { php: "8.3", magento: "2.4.8-p3" }
+          - { php: "8.5", magento: "2.4.9" }
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2

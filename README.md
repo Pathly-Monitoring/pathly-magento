@@ -18,8 +18,8 @@ Lumi pays nothing, submits no form and only types test values. You validate each
 
 | | |
 |---|---|
-| Magento Open Source or Adobe Commerce | 2.4.6, 2.4.7, 2.4.8 |
-| PHP | 8.1 to 8.4, as supported by your Magento version |
+| Magento Open Source or Adobe Commerce | 2.4.6, 2.4.7, 2.4.8, 2.4.9 |
+| PHP | 8.1 to 8.5, as supported by your Magento version |
 | Pathly account | free Solo plan, without credit card: [create an account](https://pathlyhq.com/fr/login?mode=signup&ref=magento&utm_source=magento&utm_medium=module) |
 
 ## Installation
@@ -111,7 +111,7 @@ sh dev/build.sh            # in a PHP container with Composer: build/pathly-modu
 dev/integration/run.sh     # about 3 GB of memory
 ```
 
-The CI (GitHub Actions) runs the Magento Coding Standard, the unit tests on PHP 8.1 (Magento 2.4.6) and 8.3 (2.4.7 and 2.4.8) with the coverage check, the archive and the integration test.
+The CI (GitHub Actions) runs the Magento Coding Standard, the unit tests on PHP 8.1 (Magento 2.4.6) 8.3 (2.4.7 and 2.4.8) and 8.5 (2.4.9) with the coverage check, the archive and the integration test.
 
 ## License
 
