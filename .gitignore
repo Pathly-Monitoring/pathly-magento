@@ -3,4 +3,4 @@
 /dev/tools/*/vendor/
 /.phpunit.cache/
 /.phpunit.result.cache
-/tests/integration/.state/
+/dev/integration/.state/

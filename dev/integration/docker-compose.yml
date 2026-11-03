@@ -1,0 +1,72 @@
+# Integration test of the module on a real Magento, with the Pathly API
+# simulated. The shop resolves api.pathlyhq.com to the simulator, which
+# answers in HTTPS with a certificate the shop trusts: the module code is the
+# shipped code, with its fixed address. No port is opened but the shop's, on
+# 127.0.0.1. Run by dev/integration/run.sh.
+name: pathly-magento-it
+
+services:
+  db:
+    image: mariadb:11.4
+    environment:
+      MARIADB_ROOT_PASSWORD: integration
+      MARIADB_DATABASE: magento
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      retries: 30
+    networks: [it]
+
+  opensearch:
+    image: opensearchproject/opensearch:2.19.1
+    environment:
+      discovery.type: single-node
+      DISABLE_SECURITY_PLUGIN: "true"
+      DISABLE_INSTALL_DEMO_CONFIG: "true"
+      OPENSEARCH_JAVA_OPTS: -Xms512m -Xmx512m
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:9200/_cluster/health || exit 1"]
+      interval: 5s
+      retries: 60
+    networks: [it]
+
+  api:
+    image: php:8.3-apache
+    volumes:
+      - ./mock:/mock:ro
+      - ./.state/certs:/certs:ro
+      - ./.state/api:/data
+    command:
+      - sh
+      - -c
+      - >-
+        a2enmod ssl >/dev/null &&
+        a2ensite default-ssl >/dev/null &&
+        sed -i 's#/etc/ssl/certs/ssl-cert-snakeoil.pem#/certs/api.crt#; s#/etc/ssl/private/ssl-cert-snakeoil.key#/certs/api.key#; s#DocumentRoot /var/www/html#DocumentRoot /mock#' /etc/apache2/sites-available/default-ssl.conf &&
+        printf '<Directory /mock>\n  Require all granted\n  FallbackResource /router.php\n</Directory>\n' > /etc/apache2/conf-enabled/mock.conf &&
+        apache2-foreground
+    networks:
+      it:
+        ipv4_address: 172.30.57.50
+
+  magento:
+    image: ${MAGENTO_IMAGE:-pathly-magento-it:2.4.8-p3}
+    build:
+      context: .
+      dockerfile: magento.Dockerfile
+      args:
+        MAGENTO_VERSION: ${MAGENTO_VERSION:-2.4.8-p3}
+    depends_on:
+      db: { condition: service_healthy }
+      opensearch: { condition: service_healthy }
+      api: { condition: service_started }
+    extra_hosts:
+      - "api.pathlyhq.com:172.30.57.50"
+    ports: ["127.0.0.1:${MAGENTO_PORT:-8617}:${MAGENTO_CONTAINER_PORT:-8080}"]
+    networks: [it]
+
+networks:
+  it:
+    ipam:
+      config:
+        - subnet: 172.30.57.0/24
