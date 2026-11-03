@@ -17,6 +17,8 @@ use Pathly\Monitoring\Console\Command\SyncCommand;
 use Pathly\Monitoring\Cron\Sync as SyncCron;
 use Pathly\Monitoring\Model\Replay;
 use Pathly\Monitoring\Model\Sync;
+use Pathly\Monitoring\Setup\Cleanup;
+use Pathly\Monitoring\Setup\Patch\Data\RemoveDataOnUninstall;
 use Pathly\Monitoring\Setup\RecurringData;
 use Pathly\Monitoring\Setup\Uninstall;
 use PHPUnit\Framework\TestCase;
@@ -35,24 +37,52 @@ class SetupTest extends TestCase
         );
     }
 
-    public function testUninstallDeletesSettingsStateJobsAndWidgets(): void
+    /**
+     * Connection that records the deletions.
+     */
+    private function recordingConnection(array &$deleted): AdapterInterface
     {
-        $deleted = [];
         $connection = $this->createMock(AdapterInterface::class);
         $connection->method('delete')->willReturnCallback(function ($table, $where) use (&$deleted) {
             $deleted[$table] = $where;
             return 1;
         });
-        $setup = $this->createMock(SchemaSetupInterface::class);
-        $setup->method('getConnection')->willReturn($connection);
-        $setup->method('getTable')->willReturnCallback(fn ($name) => 'm_' . $name);
-        (new Uninstall())->uninstall($setup, $this->createMock(ModuleContextInterface::class));
-        $this->assertSame([
+        return $connection;
+    }
+
+    private function expectedDeletions(): array
+    {
+        return [
             'm_core_config_data' => ['path LIKE ?' => 'pathly_monitoring/%'],
             'm_flag' => ['flag_code LIKE ?' => 'pathly_monitoring%'],
             'm_cron_schedule' => ['job_code LIKE ?' => 'pathly_monitoring%'],
             'm_widget_instance' => ['instance_type = ?' => Badge::class],
-        ], $deleted);
+        ];
+    }
+
+    public function testComposerUninstallDeletesSettingsStateJobsAndWidgets(): void
+    {
+        $deleted = [];
+        $setup = $this->createMock(SchemaSetupInterface::class);
+        $setup->method('getConnection')->willReturn($this->recordingConnection($deleted));
+        $setup->method('getTable')->willReturnCallback(fn ($name) => 'm_' . $name);
+        (new Uninstall(new Cleanup()))->uninstall($setup, $this->createMock(ModuleContextInterface::class));
+        $this->assertSame($this->expectedDeletions(), $deleted);
+    }
+
+    public function testRevertedPatchDeletesTheSameData(): void
+    {
+        $deleted = [];
+        $setup = $this->createMock(ModuleDataSetupInterface::class);
+        $setup->method('getConnection')->willReturn($this->recordingConnection($deleted));
+        $setup->method('getTable')->willReturnCallback(fn ($name) => 'm_' . $name);
+        $patch = new RemoveDataOnUninstall($setup, new Cleanup());
+        $this->assertSame($patch, $patch->apply());
+        $this->assertSame([], $deleted);
+        $this->assertSame([], RemoveDataOnUninstall::getDependencies());
+        $this->assertSame([], $patch->getAliases());
+        $patch->revert();
+        $this->assertSame($this->expectedDeletions(), $deleted);
     }
 
     public function testCronRunsTheSynchronization(): void
