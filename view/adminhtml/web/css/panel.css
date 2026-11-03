@@ -2,11 +2,18 @@
  * Copyright © Pathly. All rights reserved.
  * See LICENSE.txt for license details (OSL-3.0).
  */
-.pathly-panel { margin-bottom: 2rem; }
-.pathly-panel .pathly-states { max-width: 48rem; }
+.pathly-panel { margin: 0 0 3rem; padding: 1.5rem 2rem; border: 1px solid #e3e3e3; background: #fff; }
+.pathly-panel .dashboard-item-title { font-size: 1.8rem; font-weight: 600; margin-bottom: 1rem; }
+.pathly-panel .pathly-states { border-collapse: collapse; margin-bottom: 1rem; min-width: 32rem; }
+.pathly-panel .pathly-states th,
+.pathly-panel .pathly-states td { padding: .6rem 2rem .6rem 0; border-bottom: 1px solid #eee; text-align: left; }
+.pathly-panel .pathly-states th { font-weight: 600; }
 .pathly-panel .pathly-ok { color: #1f7a3a; font-weight: 600; }
 .pathly-panel .pathly-slow { color: #8a5a00; font-weight: 600; }
 .pathly-panel .pathly-fail { color: #b3261e; font-weight: 600; }
 .pathly-panel .pathly-pending { color: #5f6368; }
-.pathly-panel .pathly-shot { display: block; max-width: 32rem; width: 100%; border: 1px solid #ccc; margin: .5rem 0; }
-.pathly-lumi .pathly-lumi-proposal { margin: .5rem 0; }
+.pathly-panel .pathly-failure { margin: 1rem 0; padding: 1rem; background: #fdf3f2; border-left: 4px solid #b3261e; }
+.pathly-panel .pathly-shot { display: block; max-width: 36rem; width: 100%; border: 1px solid #ccc; margin: .8rem 0 0; }
+.pathly-panel .pathly-plan { color: #41362f; }
+.pathly-lumi .pathly-lumi-proposal { margin: .8rem 0; }
+.pathly-lumi .pathly-lumi-proposal .action-primary { margin-left: 1rem; }
