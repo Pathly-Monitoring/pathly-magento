@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pathly Checkout Monitoring - User Guide</title>
+<style>
+  body { font-family: "Segoe UI", Arial, sans-serif; color: #1d2433; font-size: 11pt; line-height: 1.5; margin: 0; }
+  h1 { font-size: 22pt; margin: 0 0 4pt; color: #0b1220; }
+  h2 { font-size: 14pt; margin: 18pt 0 6pt; color: #0f7f73; border-bottom: 1px solid #d8e4e2; padding-bottom: 3pt; }
+  h3 { font-size: 11.5pt; margin: 12pt 0 4pt; }
+  code, pre { font-family: Consolas, monospace; font-size: 9.5pt; background: #f2f5f4; }
+  pre { padding: 6pt 8pt; white-space: pre-wrap; }
+  img { max-width: 100%; border: 1px solid #ccd; margin: 6pt 0; }
+  table { border-collapse: collapse; width: 100%; }
+  td, th { border: 1px solid #d8dde3; padding: 4pt 6pt; text-align: left; vertical-align: top; }
+  .lead { color: #4a5568; font-style: italic; }
+  .note { background: #fff8e6; border-left: 3pt solid #c58a00; padding: 6pt 8pt; }
+</style>
+</head>
+<body>
+<h1>Pathly Checkout Monitoring</h1>
+<p>User and installation guide, version 1.0.0. For Magento Open Source and Adobe Commerce 2.4.6, 2.4.7 and 2.4.8.</p>
+<p class="lead">Pathly watches the path. Ping if it's up. Flow if a user can walk it. Chain if the services behind it hold.</p>
+
+<p><strong>The extension is free. It connects to a Pathly account: the Solo plan is free, without credit card. Paid Pathly plans are a separate subscription (prices on pathlyhq.com).</strong></p>
+
+<h2>1. What the extension does</h2>
+<ul>
+  <li><strong>Ping</strong>: Pathly checks every 5 minutes that the shop answers. An existing Ping of the shop is attached, without duplicate.</li>
+  <li><strong>Flow of the checkout, prepared by Lumi</strong>: add a product to the cart, then go to the payment page. Lumi also proposes the customer sign-in and the contact form. Each proposed Flow is replayed before it is shown. You validate it in one click.</li>
+  <li><strong>Replay after an update</strong>: after <code>setup:upgrade</code>, or when Magento or a module changes version.</li>
+  <li><strong>Dashboard panel</strong>: state, last failure with its screenshot, plan and quotas.</li>
+  <li><strong>Availability badge</strong>, off by default.</li>
+</ul>
+
+<h2>2. Requirements</h2>
+<table>
+  <tr><th>Magento Open Source or Adobe Commerce</th><td>2.4.6, 2.4.7, 2.4.8</td></tr>
+  <tr><th>PHP</th><td>8.1 to 8.4, as supported by your Magento version</td></tr>
+  <tr><th>Cron</th><td>The Magento cron must run (replay and badge refresh every 5 minutes).</td></tr>
+  <tr><th>Outgoing HTTPS</th><td>The shop must reach <code>https://api.pathlyhq.com</code>. No other address is called.</td></tr>
+  <tr><th>Pathly account</th><td>Free Solo plan, without credit card.</td></tr>
+</table>
+
+<h2>3. Installation</h2>
+<pre>composer require pathly/module-monitoring
+bin/magento module:enable Pathly_Monitoring
+bin/magento setup:upgrade
+bin/magento cache:flush</pre>
+<p>In production mode, also run <code>bin/magento setup:di:compile</code> and <code>bin/magento setup:static-content:deploy</code>.</p>
+
+<h2>4. Connection</h2>
+<ol>
+  <li>Create a free account: the link is in <strong>Stores &gt; Configuration &gt; Pathly &gt; Monitoring</strong>.</li>
+  <li>In Pathly: Settings, API keys. Create a key, preferably limited to a Space, with the scopes <code>org:read scenarios:read scenarios:write runs:read runs:trigger assistant:run assistant:save status:read status:write</code>.</li>
+  <li>Paste the key in the <strong>API key</strong> field and save. The extension checks it with Pathly. A refused key is not saved, with a readable message. Magento stores the key encrypted and never shows it again.</li>
+  <li>The Ping of the shop (secure base URL of the default store view) is created or attached at once.</li>
+</ol>
+<img src="screenshots/1-settings-en.png" alt="Settings">
+
+<h2>5. Flow of the checkout with Lumi</h2>
+<ol>
+  <li>In the <strong>Flow of the checkout</strong> group, tick "I manage this shop and allow Pathly to open it to prepare the Flow".</li>
+  <li>Click <strong>Prepare the Flow with Lumi</strong>. It takes one to two minutes.</li>
+  <li>Lumi lists the Flows that passed their replay. Click <strong>Validate this Flow</strong> on the one you want. Pathly runs it at once, then at the frequency of your plan.</li>
+</ol>
+<p>Lumi pays nothing, submits no form and only types test values. If Lumi finds nothing (heavily customized theme), record the Flow in Pathly, without code, and type its identifier in <strong>Other Flows to replay</strong>.</p>
+<img src="screenshots/2-lumi-en.png" alt="Lumi">
+<p>Errors you may see: Lumi is paused, all trials of the day are used (the number depends on the plan), Lumi is busy (try again in a minute), the plan has no Flow left.</p>
+
+<h2>6. Replay after an update</h2>
+<p>Two signals ask for a replay: every <code>bin/magento setup:upgrade</code>, and a change of the installed versions (Magento, modules) seen by the cron every 5 minutes. The replay waits for the end of the maintenance mode. Two replays are at least 10 minutes apart. Turn it off with <strong>Replay the Flows after an update</strong>.</p>
+<pre>bin/magento pathly:sync            # what the cron does, now
+bin/magento pathly:sync --replay   # replay the Flows now</pre>
+
+<h2>7. Dashboard panel</h2>
+<p>On the admin dashboard: state of the Ping and of each Flow, date, message and screenshot of the last failure, plan and quotas, links to Pathly and to the settings. The data is refreshed every 5 minutes.</p>
+<img src="screenshots/3-dashboard-en.png" alt="Dashboard panel">
+
+<h2>8. Availability badge</h2>
+<p>Off by default. <strong>Show the badge</strong> publishes your Pathly status page. Then choose <strong>In the footer</strong>, or place the "Pathly availability badge" widget (Content &gt; Widgets). The shop keeps a copy of the badge and serves it itself: visitors load nothing from Pathly. Turning the badge off unpublishes the status page if the extension had published it.</p>
+<img src="screenshots/4-badge-en.png" alt="Badge">
+
+<h2>9. Access control</h2>
+<table>
+  <tr><th>Pathly_Monitoring::config</th><td>Settings (Stores &gt; Configuration &gt; Pathly)</td></tr>
+  <tr><th>Pathly_Monitoring::lumi</th><td>Prepare and validate a Flow with Lumi</td></tr>
+  <tr><th>Pathly_Monitoring::dashboard</th><td>Panel of the dashboard</td></tr>
+</table>
+
+<h2>10. Data and security</h2>
+<ul>
+  <li>Nothing is sent before an API key is saved. Then, only the address of the shop and the versions of Magento and of the extension. No customer data, no order.</li>
+  <li>The API key is encrypted, marked sensitive, never shown again, never logged.</li>
+  <li>Admin actions use the Magento form key.</li>
+  <li>The screenshot of a failure is a link signed by Pathly, valid 15 minutes.</li>
+</ul>
+<p class="note">Each run of a Flow creates a test cart on the shop. It can trigger your abandoned cart reminders. Exclude the test customer or address from them.</p>
+
+<h2>11. Uninstallation</h2>
+<pre>bin/magento module:uninstall -r Pathly_Monitoring</pre>
+<p>Settings, state, scheduled jobs and badge widgets are deleted. Your Ping and Flows stay in your Pathly account.</p>
+
+<h2>12. Support</h2>
+<p>simon@pathlyhq.com</p>
+</body>
+</html>
