@@ -12,6 +12,7 @@ use Magento\Framework\Module\ModuleListInterface;
 use Magento\Framework\Module\PackageInfo;
 use Pathly\Monitoring\Model\Fingerprint;
 use Pathly\Monitoring\Model\UserAgent;
+use Pathly\Monitoring\Model\Version;
 use PHPUnit\Framework\TestCase;
 
 class FingerprintTest extends TestCase
@@ -43,6 +44,6 @@ class FingerprintTest extends TestCase
         $metadata = $this->createMock(ProductMetadataInterface::class);
         $metadata->method('getVersion')->willReturn('2.4.6-p15');
         $metadata->method('getEdition')->willReturn('Enterprise');
-        $this->assertSame('pathly-magento/1.0.0 Magento/2.4.6-p15 (Enterprise)', (new UserAgent($metadata))->get());
+        $this->assertSame('pathly-magento/' . Version::MODULE . ' Magento/2.4.6-p15 (Enterprise)', (new UserAgent($metadata))->get());
     }
 }

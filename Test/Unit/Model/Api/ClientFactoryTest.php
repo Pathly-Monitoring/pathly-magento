@@ -12,6 +12,7 @@ use Pathly\Monitoring\Model\Api\ApiException;
 use Pathly\Monitoring\Model\Api\ClientFactory;
 use Pathly\Monitoring\Model\Config;
 use Pathly\Monitoring\Model\UserAgent;
+use Pathly\Monitoring\Model\Version;
 use Pathly\Monitoring\Test\Unit\FakeTransport;
 use PHPUnit\Framework\TestCase;
 
@@ -38,7 +39,7 @@ class ClientFactoryTest extends TestCase
         $this->factory->create('sp_new_key_1234', 3)->getAccount();
         $request = $this->transport->requests[0];
         $this->assertSame('Bearer sp_new_key_1234', $request['headers']['Authorization']);
-        $this->assertSame('pathly-magento/1.0.0 Magento/2.4.8-p3 (Community)', $request['headers']['User-Agent']);
+        $this->assertSame('pathly-magento/' . Version::MODULE . ' Magento/2.4.8-p3 (Community)', $request['headers']['User-Agent']);
         $this->assertSame(3, $request['timeout']);
     }
 
