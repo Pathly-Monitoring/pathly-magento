@@ -1,0 +1,110 @@
+# Style (Magento Coding Standard), tests at 100 % of lines and branches on
+# PHP 8.1 and 8.3, archive to publish, integration on a real Magento.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Magento Coding Standard, syntax, translations
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          coverage: none
+          tools: composer:v2
+      - run: composer validate --strict --no-check-lock --no-check-version
+      - name: Syntax (PHP 8.1 and up)
+        run: find . -path ./dev/tools -prune -o \( -name '*.php' -o -name '*.phtml' \) -print0 | xargs -0 -n1 php -l > /dev/null
+      - run: composer install -d dev/tools/phpcs --no-interaction --no-progress
+      - name: Magento Coding Standard (errors and warnings)
+        run: dev/tools/phpcs/vendor/bin/phpcs
+      - name: Translations fr_FR, de_DE, es_ES complete
+        run: php dev/i18n.php --check
+
+  unit:
+    name: Tests PHP ${{ matrix.php }}, Magento ${{ matrix.magento }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { php: "8.1", magento: "2.4.6-p15" }
+          - { php: "8.3", magento: "2.4.7-p10" }
+          - { php: "8.3", magento: "2.4.8-p3" }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: xdebug
+          tools: composer:v2
+      - name: Sources of Magento ${{ matrix.magento }} (cache)
+        uses: actions/cache@v4
+        with:
+          path: ~/magento
+          key: magento-src-${{ matrix.magento }}-v1
+      - run: sh dev/magento-sources.sh ${{ matrix.magento }} ~/magento
+      - run: composer install -d dev/tools/phpunit --no-interaction --no-progress
+      - name: PHPUnit with path coverage
+        run: MAGENTO_ROOT=~/magento php -d memory_limit=2G dev/tools/phpunit/vendor/bin/phpunit --path-coverage --coverage-cobertura build/cobertura.xml
+      - name: 100 % of lines and branches (blocking)
+        run: php dev/coverage-check.php build/cobertura.xml
+
+  build:
+    name: Archive of the module
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          coverage: none
+          tools: composer:v2
+      - run: sh dev/build.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pathly-module-monitoring
+          path: |
+            build/pathly-module-monitoring-*.zip
+            build/package/
+          retention-days: 7
+
+  integration:
+    # One Magento version only: an install from the Adobe sources takes about
+    # ten minutes. 2.4.6 and 2.4.7 are covered by the unit tests.
+    name: Integration on Magento 2.4.8-p3
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: pathly-module-monitoring
+          path: build
+      - uses: docker/setup-buildx-action@v3
+      - name: Image of Magento 2.4.8-p3 (layers in the Actions cache)
+        uses: docker/build-push-action@v6
+        with:
+          context: dev/integration
+          file: dev/integration/magento.Dockerfile
+          build-args: MAGENTO_VERSION=2.4.8-p3
+          tags: pathly-magento-it:2.4.8-p3
+          load: true
+          cache-from: type=gha,scope=magento-2.4.8-p3
+          cache-to: type=gha,mode=max,scope=magento-2.4.8-p3
+      - run: bash dev/integration/run.sh
